@@ -1,9 +1,9 @@
-
 <?php
  session_start();
     require('funcion.php');
     require('clases/clases.php');
     verificarse();
+    verificarad();
 $error="";
     if(isset($_POST['registrar'])){
         $contra=hash('sha512',$_POST['contra']);

@@ -3,6 +3,8 @@
     require('funcion.php');
     require('clases/clases.php');
     verificarse();
+    verificarad();
+
 
     if(isset($_POST['Iniciar'])){
         $contra=hash('sha256',$_POST['pass']);

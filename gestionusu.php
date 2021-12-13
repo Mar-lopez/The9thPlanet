@@ -85,13 +85,12 @@
         <br><br>
         <!--Gestion de usuarios-->
         <table class="table table-hover">
-            <h3>Progreso de profesores</h3>
+            <h3>Reportes de</h3>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>ID de publicacion</th>
                     <th>Nombre</th>
-                    <th>Seguidores</th>
-                    <th>NO. publicaciones</th>
+                    <th>reportes</th>
                     <th>NO. reacciones</th>
                 </tr>
             </thead>

@@ -8,9 +8,10 @@
         if(isset($_GET['id_publi'])){
             $id_publi=$_GET['id_publi'];
             publi::eliminarr($id_publi);
-            publi::eliminar($id_publi);
             publi::eliminarc($id_publi);
             publi::eliminarr($id_publi);
+            publi::eliminar($id_publi);
+
             publi::eliminarre($id_publi);
 
 
