@@ -1,5 +1,4 @@
 <?php
- session_start();
     require('funcion.php');
     require('clases/clases.php');
     verificarse();
