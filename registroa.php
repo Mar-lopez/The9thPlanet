@@ -31,7 +31,6 @@ $error="";
                                         if(empty(usuarios::verificar($datos[7]))){
                                             usuarios::registrar($datos);
                                             session_start();
-                                            email::email($datos[7]);
                                             header('location:inicio.php'); 
 
                                          }else{
