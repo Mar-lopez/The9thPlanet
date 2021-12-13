@@ -1,6 +1,10 @@
+
 <?php
- require('clases/clases.php');
- require('funcion.php');
+    session_start();
+    require('clases/clases.php');
+    require('funcion.php');
+    verificarse();
+    verificarads();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,27 +60,15 @@
     <div id="menu">
         <img src="./img/Logo The 9° Planet.PNG">
 
-        <a href="inicioAdm.html"> <span class="material-icons-outlined">home</span></a>
-        <a href="comunicadosAdm.html"><span class="material-icons-outlined">account_balance</span></a>
-
-        <!-- Button trigger modal -->
-        <button id="N" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#notificaciones">
-            <span class="material-icons-outlined">notifications</span>
-        </button>
-
-        <a href="mensajeriaAdm.html"><span class="material-icons-outlined">local_post_office</span></a>
-        <a class="active" href="gestionUsuarios.html"><span class="material-icons-round">badge</span></a>
-        <a href="consultarReportes.html"> <span class="material-icons-outlined">supervised_user_circle</span></a>
-
-        <!-- Button trigger modal -->
-        <button id="N" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#publicacion">
-            <span class="material-icons-outlined">campaign</span>
-        </button>
-
+        <a  href="inicioad.php"> <span class="material-icons-outlined">home</span></a>
+        <a href="consultarrep.php"><span class="material-icons-outlined">account_balance</span></a>
+        <a href="inter.php"> <span class="material-icons-outlined">supervised_user_circle</span></a>
+   
+   
         <button id="N" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#opciones">
             <span class="material-icons-outlined">menu</span>
         </button>
-    </div>
+     </div>
 
     <section class="public">
         <br><br><?php $p=usuarios::inter();?>
@@ -177,7 +169,6 @@
     </div>
     <!-- Modal de notificaciones -->
 
-    <!-- Modal de opciones -->
     <div class="modal fade" id="opciones" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -187,48 +178,13 @@
                 </div>
                 <div class="modal-body">
 
-                    <a href="index.html">
-                        <h4>Cerrar sesión</h4>
-                    </a>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-                        Restablecer contraseña</button>
+                    <a href="cerrars.php"><h4>Cerrar sesión</h4></a>
+                    <
+        
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="restablecercontraseña"
-        tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="restablecercontraseña">Restablecer contraseña</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                    <div class="col-auto">
-                        <input type="text" placeholder="Correo institucional" id="inputPassword6" class="form-control"
-                            aria-describedby="passwordHelpInline">
-                        <br>
-                        <input type="password" placeholder="Contraseña" id="inputPassword6" class="form-control"
-                            aria-describedby="passwordHelpInline">
-                        <br>
-                        <input type="password" placeholder="Confirmar contraseña" id="inputPassword6"
-                            class="form-control" aria-describedby="passwordHelpInline">
-                        <br>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="index.html">
-                        <button class="btn btn-primary" data-bs-toggle="modal">Actualizar contraseña</button>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal de opciones -->
 </body>
 
 </html>

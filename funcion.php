@@ -16,6 +16,11 @@ function conexion($usu,$pwd){
             header('location:index.php');
         }
     }
+    function verificarads(){
+        if(!isset($_SESSION['id_admin'])){
+            header('location:index.php');
+        }
+    }
     function verificarse(){
         if(isset($_SESSION['id_usu'])){
             header('location:inicio.php');

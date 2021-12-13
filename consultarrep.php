@@ -4,6 +4,8 @@
     require('clases/clases.php');
     require('funcion.php');
     verificarse();
+    verificarads();
+
    $checar=usuarios::verre();
         if(isset($_GET['id_publi'])){
             $id_publi=$_GET['id_publi'];
@@ -73,6 +75,7 @@
 
         <a  href="inicioad.php"> <span class="material-icons-outlined">home</span></a>
         <a href="consultarrep.php"><span class="material-icons-outlined">account_balance</span></a>
+        <a href="inter.php"> <span class="material-icons-outlined">supervised_user_circle</span></a>
 
 
         <button id="N" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#opciones">

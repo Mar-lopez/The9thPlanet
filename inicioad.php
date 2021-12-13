@@ -4,6 +4,8 @@
     require('clases/clases.php');
     require('funcion.php');
     verificarse();
+    verificarads();
+
 
 $error="";
 
@@ -117,6 +119,7 @@ $error="";
 
         <a  href="inicioad.php"> <span class="material-icons-outlined">home</span></a>
         <a href="consultarrep.php"><span class="material-icons-outlined">account_balance</span></a>
+        <a href="inter.php"> <span class="material-icons-outlined">supervised_user_circle</span></a>
 
 
         <button id="N" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#opciones">
@@ -218,8 +221,7 @@ $error="";
                 <div class="modal-body">
 
                     <a href="cerrars.php"><h4>Cerrar sesión</h4></a>
-                    <button class="btn btn-primary" data-bs-target="#restablecerContraseña" data-bs-toggle="modal">
-                        Restablecer contraseña</button>
+                    <
         
                 </div>
             </div>
@@ -227,38 +229,7 @@ $error="";
     </div>
     <!-- Modal  de opciones-->
     <!--Modal restablecer contraseña-->
-    <div class="modal fade" id="restablecerContraseña" aria-hidden="true" aria-labelledby="restablecercontraseña"
-        tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="restablecercontraseña">Restablecer contraseña</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
 
-                    <div class="col-auto">
-                        <input type="text" placeholder="Correo institucional" id="inputPassword6" class="form-control"
-                            aria-describedby="passwordHelpInline">
-                        <br>
-                        <input type="password" placeholder="Contraseña" id="inputPassword6" class="form-control"
-                            aria-describedby="passwordHelpInline">
-                        <br>
-                        <input type="password" placeholder="Confirmar contraseña" id="inputPassword6"
-                            class="form-control" aria-describedby="passwordHelpInline">
-                        <br>
-
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="index.html">
-                        <button class="btn btn-primary" data-bs-toggle="modal">Actualizar contraseña</button>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--Modal restablecer contraseña-->
 
    
 
