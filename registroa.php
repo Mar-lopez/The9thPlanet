@@ -6,7 +6,7 @@
 $error="";
 
     if(isset($_POST['registrar'])){
-        $contra=hash('sha512',$_POST['contra']);
+        $contra=hash('sha256',$_POST['contra']);
         $datos=array(
             $_POST['nom'],
             $_POST['app'],
