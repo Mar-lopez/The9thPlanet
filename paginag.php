@@ -5,25 +5,33 @@
     require('funcion.php');
     verificars();
     verificarad();
-   if(isset($_GET['buscar'])){
-       $nom_usu=$_GET['buscar'];
-       $conn=conexion("be76f7e687d567","1e15a88c");
-       $consulta=$conn->prepare("select * from usuarios where nom_usu like :nom_usu");
-       $consulta->execute(array(':nom_usu'=>"%$nom_usu%"));
-        $resultado=$consulta->fetchAll();
-     }
-     if(isset($_GET['agregar'])){
-         $envia_am=$_SESSION['id_usu'];
-         $recibe_am=$r['id_usu'];
-         amigos::agregar($envia_am,$recibe_am);
-         header('location:inicio.php');
-     }
-    
+    $error="";
+
+   if(isset($_GET['id_g'])){
+
+       $mgg=grupos::busca($_GET['id_g']);
       
+   }if(isset($_POST['editar'])){
+        $nom_g=$_POST['nom'];
+        $descipcion=$_POST['app'];
+         grupos::editar($nom_g,$descipcion,$_GET['id_g']);
+    
+   }
+    
+   
+  
 
-
-        
+   if(isset($_POST['editarf'])){
+    $destino='fotos/';
+    $foto_g=$destino . $_FILES['imagenper']['name'];
+$tmp=$_FILES['imagenper']['tmp_name'];
+    move_uploaded_file($tmp,$foto_g);
+    $id_g=$_GET['id_g'];
+     grupos::editarf($id_g,$foto_g);
+} 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,6 +46,8 @@
     <link rel="stylesheet" href="./css/LadoLateral.css">
     <link rel="stylesheet" href="./css/grupos.css">
     <link rel="stylesheet" href="./css/ModaS.css">
+
+   
     <title>The ninth planet</title>
 
     <!--bootstrap-->
@@ -166,136 +176,88 @@
         
         
     </section>
-    
+   
     <section class="public">
         <div class="publicaciones">
-             <!--Nombre de la pagina-->
-             <nav id="nombrepagina">
-                <h2> Batizianos </h2>
-            </nav>
-
-
-            <?php if(!empty($resultado)):?>
-            <?php foreach($resultado as $r):?>
-                <?php
-                    $en=(($r['id_usu']*1215161)/4);
-                    ?>
-              
-                <div class="publicacionU">
-                    <!--Nombre, Alias, Tiempo de publicación, Opciones-->
-                    <div class="DatosU">
-                        <table>
+            <!--Nombre de la pagina-->
+            <nav id="nombrepagina">
+                    <h4>Bienvenido al grupo  <?php echo $mgg[0]['nom_g']?></h4>
+                        
+                    </nav>
+                <div class="publicacionA">
+                <img src="<?php echo $mgg[0]['foto_g'];?>"></img>
+                <div class="textpublicacionA">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>
-                                    <div class="iconoFotoU">
-                                        <a  href="p.php?id_usu=<?php echo $en?>">
-                                        <img src="<?php echo $r['foto_usu']?>">
-                                        </a>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="NombreU">
-                                    <a  href="p.php?id_usu=<?php echo $en?>">
-                                        <h2>
-                                            <?php echo $r['nom_usu']?>
-                                        </h2>
-                                        </a>
-                                    </div>
-                                </td>
+                                <th colspan="2"><?php echo $mgg[0]['nom_g'];?></th>
                             </tr>
-                        </table>
-                    </div>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Descripcion</th>
+                                <td><?php echo $mgg[0]['descripcion'];?></td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <td colspan="2">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#editar">
+                                        Editar
+                                    </button>
+
+                                </td>
                 </div>
-                <br>
-               <?php endforeach;?>
-               <?php else:?>
-                <h4>No se encontraron resultados con tu búsqueda</h4>
-
-            <?php endif;?>
-        </div>
-
-    </section>
-    <?php $no=noti::mostrar($_SESSION['id_usu'])?>
-    <div class="modal fade" id="notificaciones" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-           
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Notificaciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                <?php if(!empty($no)):?>
-                <?php foreach($no as $n):?>
-                    <?php if($n['accion_no']==1):?>
-                    <p><?php echo $n['nom_usu']," ",$n['app_usu']," ",$n['apm_usu']?>  comento a tu publicacion</p>
-                    <?php else:?>
-
-                    <p><?php echo $n['nom_usu']," ",$n['app_usu']," ",$n['apm_usu']?>  reacciono tu publicacion</p>
-                    <?php endif;?>
-
-<?php endforeach;?>
-<?php endif;?>
-                </div>
-                
-
             </div>
-        </div>
-    </div>
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="publicacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <!--Editar perfil-->
+            <br>
+            <div class="modal fade" id="editar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Publiación</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Publicación</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="publicacionA">
-                        <img <?php ?>>
-                        <form action="<?php echo $_SERVER['PHP_SELF'];?>"enctype="multipart/form-data" method="post">
-                            <div class="textpublicacionA">
-                                <input type="text" name="txt" class="btn btn-primary" data-bs-toggle="collapse" href="#publicar" 
-                                    aria-expanded="false" aria-controls="collapseExample" placeholder="¿Qué esta sucediendo?">
-                                </input>
-                            </div>
-                            <nav class="AgregarImg">
-                                <span class="material-icons-outlined" type="file" name="imagen">image</span>
-                                <input type="file" name="imagen"> </input>
-                            </nav>
-                            <div class="bottonA">
-                                <input type="submit" name="publicar" class="btn btn-primary" data-bs-toggle="collapse" href="#publicar" 
-                                    aria-expanded="false" aria-controls="collapseExample";> 
-                                </input>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                    <img src="<?php echo $_SESSION['foto_usu']?>"></img>
+                        <div class="textpublicacionA">
+                            <table class="table">
+                                <thead>
+                                <h7>Puedes editar tus datos personales o tu foto de perfil, pero no ambas al mismo tiempo, los cambios en la informacion de tu perfil se veran reflejados en tu siguiente inicio de sesion, pero en tus publicaciones se veran reflados al instante</h7>
+        <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post" name="editarperfil" onsubmit="return validar(this)">
+            <h3>Editar datos</h3>
+            <br>
+            <div>
+                <input type="text" name="nom"   class="input-control" placeholder="Nombre" value="<?php echo $_SESSION['nom_usu'];?>">                    
+                <input type="text" name="app"   class="input-control" placeholder="Apellido Paterno" value="<?php echo $_SESSION['app_usu'];?>">
+                       
+            </div>
+            <br>
+               
+            <br>
+            <div>
+                <input type="submit" value="Guardar cambios" name="editar" class="log-btn">
+            </div>
+        
+        </form> 
+        <br>
+        <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post" name="editarf" enctype="multipart/form-data" onsubmit="return validar(this)">
+        <h3>Editar foto de perfil</h3>
+
+            <div>
+                <input type="file" name="imagenper" ></input>
+                <input type="submit" value="Guardar cambios" name="editarf" class="log-btn">
+            </div>
+
+        </form>
+                                  
+               
 
             </div>
         </div>
     </div>
-
-
-
-    <div class="modal fade" id="opciones" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalToggleLabel">Opciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                    <a href="cerrars.php"><h4>Cerrar sesión</h4></a>
-
-                </div>
-            </div>
-        </div>
-    </div>
-   
 </body>
 
 </html>

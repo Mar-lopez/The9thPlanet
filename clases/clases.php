@@ -375,5 +375,55 @@ class msg{
         return $resultado;
     }
 }
+class grupos {
+    public static function registrar($id_usu,$nom,$des,$foto_g){
+        $conn=conexion("be76f7e687d567","1e15a88c");
+        $consulta=$conn->prepare("insert into grupos(id_g,nom_g,descripcion,id_usu,foto_g) values(null,:nom_g,:descripcion,:id_usu,:foto_g)");
+        $consulta->execute(array(
+            ':nom_g'=>$nom,
+            ':descripcion'=>$des,
+            ':id_usu'=>$id_usu,
+             ':foto_g'=>$foto_g
 
+        ));
+    }
+    public static function mostrar($id_usu){
+        $conn=conexion("be76f7e687d567","1e15a88c");
+        $consulta=$conn->prepare("select U.id_usu,U.rol_usu,U.nom_usu,U.alias_usu,U.foto_usu,G.id_g,G.nom_g,G.foto_g from usuarios U inner join grupos G on U.id_usu=G.id_usu where G.id_usu=:id_usu  ORDER BY G.id_g DESC");
+        $consulta->execute(array(':id_usu'=>$id_usu));
+        $resultado=$consulta->fetchAll();
+        return $resultado;
+    }
+    public static function busca($id_g){
+        $conn=conexion("be76f7e687d567","1e15a88c");
+        $consulta=$conn->prepare("select * from grupos where id_g=:id_g");
+        $consulta->execute(array(':id_g'=>$id_g));
+        $resultado=$consulta->fetchAll();
+        return $resultado;
+
+    }
+    public static function editarf($id_g,$foto_g){
+        $conn=conexion("be76f7e687d567","1e15a88c");
+        $consulta=$conn->prepare("update grupos set foto_g=:foto_g where id_g=:id_g");
+        $consulta->execute(array(
+            ':foto_g'=>$foto_g,
+            ':id_g'=>$id_g
+
+        ));
+
+    }
+
+    public static function editar($nom_g,$descripcion,$id_g){
+        $conn=conexion("be76f7e687d567","1e15a88c");
+        $consulta=$conn->prepare("update usuarios set nom_g=:nom_g,descripcion=:descripcion where id_g:id_g");
+        $consulta->execute(array(
+            ':nom_g'=>$nom_g,
+            ':descripcion'=>$descripcion,
+            ':id_g'=>$id_g
+
+        ));
+        $resultado=$consulta->fetchAll();
+        return $resultado;
+    }
+}
 ?>

@@ -7,10 +7,12 @@
     verificarad();
     $error="";
    if(isset($_GET['id_usu'])){
-       $usu=usuarios::busca($_GET['id_usu']);
+    $des=(($_GET['id_usu']/1215161)*4);
+
+       $usu=usuarios::busca($des);
        if(empty($usu)) header('location:index.php');
-        $verifica=amigos::ver($_SESSION['id_usu'],$_GET['id_usu']);
-        $publi=publi::publi_por_usuario($_GET['id_usu']);
+        $verifica=amigos::ver($_SESSION['id_usu'],$des);
+        $publi=publi::publi_por_usuario($des);
    }
    if(isset($_GET['agregar'])){
        $envia_am=$_SESSION['id_usu'];

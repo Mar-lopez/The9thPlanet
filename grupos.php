@@ -5,25 +5,30 @@
     require('funcion.php');
     verificars();
     verificarad();
-   if(isset($_GET['buscar'])){
-       $nom_usu=$_GET['buscar'];
-       $conn=conexion("be76f7e687d567","1e15a88c");
-       $consulta=$conn->prepare("select * from usuarios where nom_usu like :nom_usu");
-       $consulta->execute(array(':nom_usu'=>"%$nom_usu%"));
-        $resultado=$consulta->fetchAll();
-     }
-     if(isset($_GET['agregar'])){
-         $envia_am=$_SESSION['id_usu'];
-         $recibe_am=$r['id_usu'];
-         amigos::agregar($envia_am,$recibe_am);
-         header('location:inicio.php');
-     }
     
-      
-
+    if(isset($_POST['crear'])){
+            $nom=$_POST['nom'];
+            $des=$_POST['des'];
+            $destino='fotos/';
+            $foto_g=$destino . $_FILES['imagenper']['name'];
+            $tmp=$_FILES['imagenper']['tmp_name'];  
+            move_uploaded_file($tmp,$foto_g);
+            $id_usu=$_SESSION['id_usu'];
 
         
+            grupos::registrar($id_usu,$nom,$des,$foto_g);
+            header('location:inicio.php'); 
+
+       
+    }
+
+
+    
+    
+
+    if($_SESSION['id_usu']!=" "){
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,6 +43,8 @@
     <link rel="stylesheet" href="./css/LadoLateral.css">
     <link rel="stylesheet" href="./css/grupos.css">
     <link rel="stylesheet" href="./css/ModaS.css">
+
+   
     <title>The ninth planet</title>
 
     <!--bootstrap-->
@@ -73,8 +80,8 @@
         crossorigin="anonymous"></script>
 </head>
 
-<body>
-<header>
+<body> 
+    <header>
     <div id="menu">
         <img src="./img/Logo The 9° Planet.PNG">
         <a class="active" href="inicio.php"> <span class="material-icons-round">home</span></a>
@@ -98,6 +105,7 @@
         </form>
     </div>
     </header>
+    
     <section class="Lateral">
         <!--grupos-->
         <div class="grupos">
@@ -166,21 +174,57 @@
         
         
     </section>
-    
     <section class="public">
         <div class="publicaciones">
-             <!--Nombre de la pagina-->
-             <nav id="nombrepagina">
-                <h2> Batizianos </h2>
+            <!--Nombre de la pagina-->
+            <nav id="nombrepagina">
+                <h2>Grupos</h2>
             </nav>
 
+            <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post" name="crea" enctype="multipart/form-data" onsubmit="return validar(this)">
+            
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating">
+                        <input type="text" name="nom"   class="form-control" placeholder="Nombre del grupo" id="floatingInputGrid" 
+                        tabindex="0" class="btn btn-lg btn-danger" data-bs-toggle="popover"  data-bs-placement="left" data-bs-trigger="focus"
+                        data-bs-content="">  
+                        <label for="floatingInputGrid">Nombre del grupo</label>
+                    </div>
+                </div>
 
-            <?php if(!empty($resultado)):?>
-            <?php foreach($resultado as $r):?>
-                <?php
-                    $en=(($r['id_usu']*1215161)/4);
-                    ?>
-              
+                <div class="col-md">
+                    <div class="form-floating">
+                        <input type="text" name="des"  class="form-control" placeholder="Alias" id="floatingInputGrid"
+                        tabindex="0" class="btn btn-lg btn-danger" role="button" data-bs-toggle="popover"  data-bs-placement="right" data-bs-trigger="focus"
+                        data-bs-content="Así te reconoceran tus amigos bartizianos, sin acentos y sustituye la letra ñ por n.Ingresa 3 a 15 letras
+                        
+                        Reglas:
+                        *Debe tener entre 3 y 15 caracteres.">
+                        <label for="floatingInputGrid"> Descripcion </label>
+                    </div>
+                </div>
+            </div>
+            <br>
+        <h3>Editar foto de perfil</h3>
+
+            <div>
+                <input type="file" name="imagenper" ></input>
+                <input type="submit" value="Guardar cambios" name="editarf" class="log-btn">
+            </div>
+
+            <input type="submit" value="crear" name="crear" class="btn btn-lg btn-primary" type="button">
+            <br><br>
+        </form>   
+                        
+<?php 
+
+$id_usu=$_SESSION['id_usu'];
+$g=grupos::mostrar($id_usu);
+                        ?>
+
+        <?php foreach($g as $gg):?>
+                 <!--Publicación de Usuario-->
                 <div class="publicacionU">
                     <!--Nombre, Alias, Tiempo de publicación, Opciones-->
                     <div class="DatosU">
@@ -188,114 +232,43 @@
                             <tr>
                                 <td>
                                     <div class="iconoFotoU">
-                                        <a  href="p.php?id_usu=<?php echo $en?>">
-                                        <img src="<?php echo $r['foto_usu']?>">
-                                        </a>
+                                    <a  href="paginag.php?id_g=<?php echo $gg['id_g']?>">
+                                        <h2>
+                                        <img src="<?php echo $gg['foto_g']?>">
+                                        </h2></a>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="NombreU">
-                                    <a  href="p.php?id_usu=<?php echo $en?>">
-                                        <h2>
-                                            <?php echo $r['nom_usu']?>
-                                        </h2>
-                                        </a>
+                                    <a  href="paginag.php?id_g=<?php echo $gg['id_g']?>">
+                                        <h4>
+                                            <?php echo $gg['nom_g'];?> 
+                                        </h4></a>
                                     </div>
                                 </td>
+                                <td>
+                               
+                              
+                            
+
                             </tr>
                         </table>
                     </div>
-                </div>
-                <br>
-               <?php endforeach;?>
-               <?php else:?>
-                <h4>No se encontraron resultados con tu búsqueda</h4>
-
-            <?php endif;?>
-        </div>
-
-    </section>
-    <?php $no=noti::mostrar($_SESSION['id_usu'])?>
-    <div class="modal fade" id="notificaciones" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-           
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Notificaciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                <?php if(!empty($no)):?>
-                <?php foreach($no as $n):?>
-                    <?php if($n['accion_no']==1):?>
-                    <p><?php echo $n['nom_usu']," ",$n['app_usu']," ",$n['apm_usu']?>  comento a tu publicacion</p>
-                    <?php else:?>
-
-                    <p><?php echo $n['nom_usu']," ",$n['app_usu']," ",$n['apm_usu']?>  reacciono tu publicacion</p>
-                    <?php endif;?>
-
-<?php endforeach;?>
-<?php endif;?>
-                </div>
-                
-
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="publicacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Publiación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="publicacionA">
-                        <img <?php ?>>
-                        <form action="<?php echo $_SERVER['PHP_SELF'];?>"enctype="multipart/form-data" method="post">
-                            <div class="textpublicacionA">
-                                <input type="text" name="txt" class="btn btn-primary" data-bs-toggle="collapse" href="#publicar" 
-                                    aria-expanded="false" aria-controls="collapseExample" placeholder="¿Qué esta sucediendo?">
-                                </input>
-                            </div>
-                            <nav class="AgregarImg">
-                                <span class="material-icons-outlined" type="file" name="imagen">image</span>
-                                <input type="file" name="imagen"> </input>
-                            </nav>
-                            <div class="bottonA">
-                                <input type="submit" name="publicar" class="btn btn-primary" data-bs-toggle="collapse" href="#publicar" 
-                                    aria-expanded="false" aria-controls="collapseExample";> 
-                                </input>
-                            </div>
-                        </form>
+                    <br>
+                    
+                        <br>
                     </div>
                 </div>
+                <br>
+                
+                <?php endforeach;?>
 
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="modal fade" id="opciones" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalToggleLabel">Opciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-
-                    <a href="cerrars.php"><h4>Cerrar sesión</h4></a>
-
-                </div>
-            </div>
-        </div>
-    </div>
    
+
 </body>
 
 </html>
+<?php
+}else{
+    header('location:index.php');
+}?>
