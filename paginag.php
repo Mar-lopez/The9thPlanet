@@ -8,27 +8,55 @@
     $error="";
 
    if(isset($_GET['id_g'])){
+    $publi=grupos::mostrarp($_GET['id_g']);
 
        $mgg=grupos::busca($_GET['id_g']);
       
-   }if(isset($_POST['editar'])){
+
+    } 
+    if(isset($_POST['publicar']) and !empty($_FILES) and !empty($_POST['txt'])){
+        $destino='fotos/';
+        $texto_publi=$_POST['txt'];
+        $foto_publi=$destino . $_FILES['imagen']['name'];
+         $tmp=$_FILES['imagen']['tmp_name'];
+         $id_g=$_POST['publicar'];
+        publi::publicaciong($_SESSION['id_usu'],$texto_publi,$foto_publi,$id_g);
+        move_uploaded_file($tmp,$foto_publi);
+        header('location:inicio.php');
+        
+}
+
+if(isset($_GET['acceso'])){
+    $envia_am=$_SESSION['id_usu'];
+    $recibe_am=$_GET['acceso'];
+    grupos::acceso( $envia_am,$recibe_am);
+    header('location:paginag.php');
+}
+if(isset($_POST['comentar']) and !empty($_POST['txtcom'])){
+    $id_usu=$_SESSION['id_usu'];
+    $texto_com=$_POST['txtcom'];
+    $id_publi=$_POST['comentar'];
+    comentarios::agregar($id_usu,$texto_com,$id_publi);
+    header('location:inicio.php');
+    }
+    if(isset($_GET['re'])){
+        reacciones::agregar($_GET['id_publi'],$_SESSION['id_usu']);
+        header('location:inicio.php');
+    }
+    if(isset($_POST['editar'])) {
         $nom_g=$_POST['nom'];
         $descipcion=$_POST['app'];
-         grupos::editar($nom_g,$descipcion,$_GET['id_g']);
-    
-   }
-    
-   
-  
-
-   if(isset($_POST['editarf'])){
-    $destino='fotos/';
-    $foto_g=$destino . $_FILES['imagenper']['name'];
-$tmp=$_FILES['imagenper']['tmp_name'];
-    move_uploaded_file($tmp,$foto_g);
-    $id_g=$_GET['id_g'];
-     grupos::editarf($id_g,$foto_g);
-} 
+        $id_g=$_POST['editar'];
+        grupos::editar($nom_g,$descipcion,$id_g);
+        }
+        if(isset($_POST['editarf'])){
+            $destino='fotos/';
+            $foto_usu=$destino . $_FILES['imagenper']['name'];
+        $tmp=$_FILES['imagenper']['tmp_name'];
+            move_uploaded_file($tmp,$foto_usu);
+            $id_g=$_POST['editarf'];
+            grupos::editarf($id_g,$foto_usu);
+        } 
 ?>
 
 
@@ -188,6 +216,7 @@ $tmp=$_FILES['imagenper']['tmp_name'];
                 <img src="<?php echo $mgg[0]['foto_g'];?>"></img>
                 <div class="textpublicacionA">
                     <table class="table">
+                      
                         <thead>
                             <tr>
                                 <th colspan="2"><?php echo $mgg[0]['nom_g'];?></th>
@@ -198,7 +227,8 @@ $tmp=$_FILES['imagenper']['tmp_name'];
                                 <th scope="row">Descripcion</th>
                                 <td><?php echo $mgg[0]['descripcion'];?></td>
                             </tr>
-                            
+                            <a href="paginag.php?acceso=<?php echo $_GET['id_g'];?>">acceso</a>
+
                         </tbody>
                     </table>
                     <td colspan="2">
@@ -210,6 +240,198 @@ $tmp=$_FILES['imagenper']['tmp_name'];
                                 </td>
                 </div>
             </div>
+
+
+            <div class="PubliNueva">
+                <?php
+                if(!empty($publi)):
+                ?>
+                <?php foreach($publi as $publis):?>
+                 <!--Publicación de Usuario-->
+                <div class="publicacionU">
+                    <!--Nombre, Alias, Tiempo de publicación, Opciones-->
+                    <div class="DatosU">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div class="iconoFotoU">
+                                    <a  href="p.php?id_usu=<?php echo $publis['id_usu']?>">
+                                        <h2>
+                                        <img src="<?php echo $publis['foto_usu']?>">
+                                        </h2></a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="NombreU">
+                                    <a  href="p.php?id_usu=<?php echo $publis['id_usu']?>">
+                                        <h4>
+                                            <?php echo $publis['nom_usu'];?> 
+                                        </h4></a>
+                                    </div>
+                                </td>
+                                <td>
+                                <div class="NombreU">
+                                    <a  href="p.php?id_usu=<?php echo $publis['id_usu']?>">
+                                        <h4>
+                                            <?php echo $publis['alias_usu'];?> 
+                                        </h4></a>
+                                    </div>
+                                </td>
+                                <?php if($publis['id_usu']!=$_SESSION['id_usu']):?>
+
+                                    <td>
+                                <div class="NombreU">
+                                <a href="<?php echo $_SERVER['PHP_SELF']?>?rep=1 && id_publi=<?php echo $publis['id_publi']?> && id_usu=<?php echo $publis['id_usu']?>">Reportar</a>
+                                    </div>
+                                </td>
+                               <?php else:?>
+
+                                <?php endif;?>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                
+                    <!--Nombre, Alias, Tiempo de publicación, Opciones-->
+                    <!--Texto de la publicación-->
+                    <div class="textpublicacionU">
+                        <table>
+                            <tr>
+                                <td>
+                                    <div class="FechaPU">
+                                        <h2>
+                                            <?php echo $publis['fecha_publi'];?>
+                                        </h2>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!--imagen de la publiacción -->
+                            <tr>
+                                <td>
+                                    <div class="TextoPU">
+                                        <h2>
+                                            <?php echo $publis['texto_publi'];?> 
+                                        </h2>
+                                    
+                                        <!--Imagen de la publicación-->
+                                        <?php
+                                           if($publis['foto_publi']=='fotos/' || $publis['foto_publi']=='NULL' ){
+                                           echo "";
+                                           }else{
+                                           require('confoto.php');
+                                        }                     
+                                        ?>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!--Texto de la publicación-->
+                    <div class="iconoReaccionU">
+                        <table>
+                            <tr>
+                                <td>
+                                    <p><?php echo reacciones::mostrar($publis['id_publi'])[0][0];?> reacciones</p>
+                                </td>
+                                <td>
+                                    <p><?php echo comentarios::contar($publis['id_publi'])[0][0];?> comentarios</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!--Comentarios-->
+                    <div class="ComentariosP">
+                        <?php $comentario=comentarios::mostrar($publis['id_publi']);?>
+                        <?php if(!empty($comentario)):?>
+                        <?php foreach($comentario as $c):?>
+                            
+                        <table>
+                        
+                            <tr>
+                                <td>
+                                <div class="NombreU">
+                                        <h4>
+                                            <?php echo $c['nom_usu'];?> 
+                                        </h4>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="FechaPUeC">
+                                        <h4> 
+                                            <?php echo $c['fecha_com']?>
+                                        </h4>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr >
+                                <td colspan="2">
+                                    <div class="texteC">
+                                        <h6><?php echo $c['texto_com']?></h7>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <?php endforeach;?>
+                        <?php endif;?>
+                    </div>
+                    <br>
+                    <!--este es para la interaccion de los usuarios -->
+                    <div class="ReaccionAP">
+                        <?php if(reacciones::verifica($publis['id_publi'],$_SESSION['id_usu'])==0):?>
+                        <table>
+                            <tr>
+                                <td> 
+                                    <div class="LikeS">
+                                        <a href="<?php echo $_SERVER['PHP_SELF']?>?re=1 && id_publi=<?php echo $publis['id_publi']?>"> 
+                                            <span class="material-icons-outlined">favorite </span>
+                                            
+                                        </a>
+                                       
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="ComentarioS">
+                                        <a href="<?php echo $_SERVER['PHP_SELF']?>?ree=-1 && id_publi=<?php echo $publis['id_publi']?>"> 
+                                            <span class="material-icons-outlined">chat_bubble</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <?php else:?>
+                        <?php endif;?>                    
+                    </div>
+                    <br>
+                    <div class="comentario">
+                        <form action="<?php echo $_SERVER['PHP_SELF']?>" method="post" name="comentar" >
+                            
+                            <div  class="comentarioU" >
+                                <div class="form-floating">
+                                    <input type="text" name="txtcom" class="form-control" data-bs-toggle="collapse" href="#publicar" 
+                                        aria-expanded="false" aria-controls="collapseExample" id="floatingInputGrid" placeholder="Comentar">
+                                    </input>
+                                    <input type="hidden" name="comentar" class="btn btn-primary" value="<?php echo $publis['id_publi'];?>" data-bs-toggle="collapse" href="#publicar" 
+                                        aria-expanded="false" aria-controls="collapseExample";></input>
+                                    <label for="floatingInputGrid">Agrega un comentario</label>
+                                </div>
+                            </div>
+                            
+                        </form>
+                        
+                        
+                    </div>
+                        <br>
+                    </div>
+                </div>
+                <br>
+                
+                <?php endforeach;?>
+                 <?php endif;?>
+               
+               
+                
+            </div>
+            
             <!--Editar perfil-->
             <br>
             <div class="modal fade" id="editar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -221,7 +443,7 @@ $tmp=$_FILES['imagenper']['tmp_name'];
                 </div>
                 <div class="modal-body">
                     <div class="publicacionA">
-                    <img src="<?php echo $_SESSION['foto_usu']?>"></img>
+                    <img src="<?php echo $mgg[0]['foto_g']?>"></img>
                         <div class="textpublicacionA">
                             <table class="table">
                                 <thead>
@@ -230,15 +452,15 @@ $tmp=$_FILES['imagenper']['tmp_name'];
             <h3>Editar datos</h3>
             <br>
             <div>
-                <input type="text" name="nom"   class="input-control" placeholder="Nombre" value="<?php echo $_SESSION['nom_usu'];?>">                    
-                <input type="text" name="app"   class="input-control" placeholder="Apellido Paterno" value="<?php echo $_SESSION['app_usu'];?>">
+                <input type="text" name="nom"   class="input-control" placeholder="Nombre" value="<?php echo $mgg[0]['nom_g'];?>">                    
+                <input type="text" name="app"   class="input-control" placeholder="Apellido Paterno" value="<?php echo $mgg[0]['descripcion'];?>">
                        
             </div>
             <br>
                
             <br>
             <div>
-                <input type="submit" value="Guardar cambios" name="editar" class="log-btn">
+                <input type="submit" value="<?php echo ($_GET['id_g']);?>" name="editar" class="log-btn">
             </div>
         
         </form> 
@@ -248,7 +470,7 @@ $tmp=$_FILES['imagenper']['tmp_name'];
 
             <div>
                 <input type="file" name="imagenper" ></input>
-                <input type="submit" value="Guardar cambios" name="editarf" class="log-btn">
+                <input type="submit" value="<?php echo ($_GET['id_g']);?>" name="editarf" class="log-btn">
             </div>
 
         </form>

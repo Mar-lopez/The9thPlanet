@@ -5,7 +5,7 @@
     require('funcion.php');
     verificars();
     verificarad();
-    
+ 
     if(isset($_POST['crear'])){
             $nom=$_POST['nom'];
             $des=$_POST['des'];
@@ -17,13 +17,10 @@
 
         
             grupos::registrar($id_usu,$nom,$des,$foto_g);
-            header('location:inicio.php'); 
+            header('location:grupos.php'); 
 
-       
     }
-
-
-    
+   
     
 
     if($_SESSION['id_usu']!=" "){

@@ -5,20 +5,17 @@
     require('funcion.php');
     verificars();
     verificarad();
-    if($_SESSION['rol_usu']='Profesor'){
-        $publi=publi::mostrarpr($_SESSION['id_usu']);
-
-    }else{
+   
         $publi=publi::mostrar($_SESSION['id_usu']);
 
-    }
+    
     $error="";
     if(isset($_POST['publicar']) and !empty($_FILES) and !empty($_POST['txt'])){
         $destino='fotos/';
         $texto_publi=$_POST['txt'];
         $foto_publi=$destino . $_FILES['imagen']['name'];
          $tmp=$_FILES['imagen']['tmp_name'];
-        publi::publicacion($_SESSION['id_usu'],$texto_publi,$foto_publi);
+        publi::publicacionsg($_SESSION['id_usu'],$texto_publi,$foto_publi);
         move_uploaded_file($tmp,$foto_publi);
         header('location:inicio.php');
 
