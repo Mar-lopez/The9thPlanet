@@ -9,11 +9,16 @@
 
    if(isset($_GET['id_g'])){
     $publi=grupos::mostrarp($_GET['id_g']);
-
+    $edo=grupos::edo($_GET['id_g'],$_SESSION['id_usu']);
        $mgg=grupos::busca($_GET['id_g']);
-      
 
     } 
+    function consoleLog($msg) {
+		echo '<script type="text/javascript">' .
+        'console.log('.$_GET["id_g"].');</script>';
+	}
+
+	consoleLog('.$_GET["id_g"].');
     if(isset($_POST['publicar']) and !empty($_FILES) and !empty($_POST['txt'])){
         $destino='fotos/';
         $texto_publi=$_POST['txt'];
@@ -140,12 +145,7 @@ if(isset($_POST['comentar']) and !empty($_POST['txtcom'])){
         <!--grupos-->
         <div class="grupos">
             <table>
-                <tr>
-                    <td>
-                        <!---Nombre de la sección-->
-                        <blockquote class="twitter-tweet"><p lang="es" dir="ltr">Activismo Día 13<a href="https://twitter.com/hashtag/16diasdeactivismo?src=hash&amp;ref_src=twsrc%5Etfw">#16diasdeactivismo</a> <a href="https://twitter.com/hashtag/eliminaci%C3%B3ndelaviolenciacontralasmujeresenelIPN?src=hash&amp;ref_src=twsrc%5Etfw">#eliminacióndelaviolenciacontralasmujeresenelIPN</a> <a href="https://twitter.com/hashtag/25NdIadelaeliminaci%C3%B3ndelaviolenciacontralasmujeres?src=hash&amp;ref_src=twsrc%5Etfw">#25NdIadelaeliminacióndelaviolenciacontralasmujeres</a> <a href="https://t.co/L6oycQcFgl">pic.twitter.com/L6oycQcFgl</a></p>&mdash; cecyt9 (@_cecyt9) <a href="https://twitter.com/_cecyt9/status/1462903925934338055?ref_src=twsrc%5Etfw">November 22, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>                    
-                    </td>
-                </tr>
+                
                 <tr>
                     <td>
                         <!---Nombre de la sección-->
@@ -227,8 +227,23 @@ if(isset($_POST['comentar']) and !empty($_POST['txtcom'])){
                                 <th scope="row">Descripcion</th>
                                 <td><?php echo $mgg[0]['descripcion'];?></td>
                             </tr>
-                            <a href="paginag.php?acceso=<?php echo $_GET['id_g'];?>">acceso</a>
+                            <tr>
+                            <th scope="row">Estado</th>
+                           
+                            <?php if(empty($edo)):?>
+                                <td>
+                           <a href="paginag.php?acceso=<?php echo $_GET['id_g'];?>">acceso</a> <td>
+                            
+                            <?php elseif($edo[0]['estado']==0):?>
+                                <td><h7>Solicitud pendiente</h7> <td>
+                                <td>  <?php elseif($edo[0]['estado']==1):?>
+                                        <h7>Miembro del grupo</h7>
 
+                                        <?php endif;?>
+                            <td>
+                          
+
+                        </tr>
                         </tbody>
                     </table>
                     <td colspan="2">
@@ -243,7 +258,35 @@ if(isset($_POST['comentar']) and !empty($_POST['txtcom'])){
 
 
             <div class="PubliNueva">
+                
+                <?php if(empty($edo)):?>
+                    <h4>No eres miembro del grupo</h4>
+                    <?php elseif($edo[0]['estado']==0):?>
+                                <h7>Espera a que el administrador acepte tu solicitud </h7>
+                                    <?php elseif($edo[0]['estado']==1):?>
+                                        <div class="publicacionA">
+                <img <?php ?>>
+                <form action="<?php echo $_SERVER['PHP_SELF'];?>"enctype="multipart/form-data" method="post">
+                    <div class="textpublicacionA">
+                        <input type="text" name="txt" class="btn btn-primary" data-bs-toggle="collapse" href="#publicar" 
+                            aria-expanded="false" aria-controls="collapseExample" placeholder="¿Qué esta sucediendo?">
+                        </input>
+                    </div>
+                    
+                    <nav class="AgregarImg">
+                        <span class="material-icons-outlined" type="file" name="imagen">image</span>
+                        <input type="file" name="imagen" accept="image/png,image/jpeg"> </input>
+                    </nav>
+                    <div class="bottonA">
+                            <input type="submit" name="publicar" class="btn btn-primary" data-bs-toggle="collapse" href="#publicar" 
+                                aria-expanded="false" aria-controls="collapseExample"; value="<?php echo ($_GET['id_g']);?>"> 
+                            </input>
+                    </div>
+                    <br>
+                </form>
+            </div>
                 <?php
+
                 if(!empty($publi)):
                 ?>
                 <?php foreach($publi as $publis):?>
@@ -427,7 +470,8 @@ if(isset($_POST['comentar']) and !empty($_POST['txtcom'])){
                 
                 <?php endforeach;?>
                  <?php endif;?>
-               
+                 <?php endif;?>
+
                
                 
             </div>

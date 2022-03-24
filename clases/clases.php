@@ -437,13 +437,21 @@ class grupos {
 
     public static function acceso($envia_am,$recibe_am){
         $conn=conexion("be76f7e687d567","1e15a88c");
-        $consulta=$conn->prepare("insert into mg(idMG,id_usu,id_g,fecha) values(null,:envia_am,:recibe_am,Now())");
+        $consulta=$conn->prepare("insert into mg(idMG,id_usu,id_g,estado,fecha) values(null,:envia_am,:recibe_am,0,Now())");
         $consulta->execute(array(':envia_am'=>$envia_am,':recibe_am'=>$recibe_am));
+        
     }
     public static function mostrarp($amigos){
         $conn=conexion("be76f7e687d567","1e15a88c");
         $consulta=$conn->prepare("select U.id_usu,U.rol_usu,U.nom_usu,U.alias_usu,U.foto_usu,P.id_publi,P.texto_publi,P.foto_publi,P.fecha_publi,P.id_g from usuarios U inner join publicaciones P on U.id_usu=P.id_usu where  P.id_g in ($amigos)  ORDER BY P.id_publi DESC");
         $consulta->execute();
+        $resultado=$consulta->fetchAll();
+        return $resultado;
+    }
+    public static function edo($id_g,$id_usu){
+        $conn=conexion("be76f7e687d567","1e15a88c");
+        $consulta=$conn->prepare("select * from mg where (id_g=:id_g and id_usu=:id_usu)");
+        $consulta->execute(array(':id_g'=>$id_g,':id_usu'=>$id_usu));
         $resultado=$consulta->fetchAll();
         return $resultado;
     }
